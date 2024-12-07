@@ -1,0 +1,19 @@
+# Ignore build files
+/build/
+*.o
+*.d
+*.elf
+*.bin
+*.map
+*.hex
+
+# Ignore IDE-specific files
+.vscode/
+*.launch
+*.settings/
+*.cproject
+*.project
+
+# Ignore other temporary files
+*.log
+*.bak
