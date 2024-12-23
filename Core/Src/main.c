@@ -87,6 +87,114 @@ vTaskDelay(xDelay);
 }
 
 }*/
+/*
+//QUESTION 1 ET 2
+void Led_Gatekeeper1(void *pvParameters) {
+    TickType_t xDelay = 1000 / portTICK_PERIOD_MS; // 1-second delay
+    for (;;) {
+        HAL_GPIO_WritePin(GPIO, LD4_Pin | LD3_Pin, GPIO_PIN_RESET);
+        // printf("Low\n"); // Uncomment for debugging
+        // puts("Low");    // Uncomment for debugging
+
+        vTaskDelay(xDelay);
+
+        HAL_GPIO_WritePin(GPIO, LD4_Pin | LD3_Pin, GPIO_PIN_SET);
+        // printf("High\n"); // Uncomment for debugging
+        // puts("High");     // Uncomment for debugging
+
+        vTaskDelay(xDelay);
+    }
+}
+
+void Led_Gatekeeper2(void *pvParameters) {
+    TickType_t xDelay = 1000 / portTICK_PERIOD_MS; // 1-second delay
+    for (;;) {
+        HAL_GPIO_WritePin(GPIO, LD5_Pin | LD6_Pin, GPIO_PIN_RESET);
+        // printf("Low\n"); // Uncomment for debugging
+        // puts("Low");    // Uncomment for debugging
+
+        vTaskDelay(xDelay);
+
+        HAL_GPIO_WritePin(GPIO, LD5_Pin | LD6_Pin, GPIO_PIN_SET);
+        // printf("High\n"); // Uncomment for debugging
+        // puts("High");     // Uncomment for debugging
+
+        vTaskDelay(xDelay);
+    }
+}
+
+ */
+/*
+//QUESTION 4
+void Led_GateKeeper1(void *pvParameters)
+{
+    TickType_t xDelay = 1000 ;
+    for(;;)
+    {
+        HAL_GPIO_WritePin(GPIOD, LD4_Pin|LD3_Pin, GPIO_PIN_RESET);
+        //printf("Low\n");
+        //puts("Low");
+        vTaskDelay(xDelay);
+        HAL_GPIO_WritePin(GPIOD, LD4_Pin|LD3_Pin, GPIO_PIN_SET);
+        //printf("High\n");
+        //puts("High");
+        vTaskDelay(xDelay);
+    }
+}
+
+void Led_GateKeeper2(void *pvParameters)
+{
+    TickType_t xDelay = 1000 ;
+    for(;;)
+    {
+        HAL_GPIO_WritePin(GPIOD, LD5_Pin, GPIO_PIN_RESET);
+        //printf("Low\n");
+        //puts("Low");
+        vTaskDelay(xDelay);
+        HAL_GPIO_WritePin(GPIOD, LD5_Pin, GPIO_PIN_SET);
+        //printf("High\n");
+        //puts("High");
+        vTaskDelay(xDelay);
+    }
+}
+void Led_GateKeeper3(void *pvParameters)
+{
+    TickType_t xDelay = 1000 ;
+    for(;;){
+	HAL_GPIO_WritePin(GPIOD, LD6_Pin, GPIO_PIN_SET);
+	vTaskDelay(xDelay);
+	HAL_GPIO_WritePin(GPIOD, LD6_Pin, GPIO_PIN_RESET);
+	vTaskDelay(xDelay);
+	}
+}
+void btn_GateKeeper(void *pvParameters)
+{
+    TickType_t xDelay = 100 ;
+    for(;;)
+    {
+    	if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == GPIO_PIN_SET)
+		{
+    		vTaskSuspend(myTask1Handle);
+    		vTaskSuspend(myTask2Handle);
+    		vTaskResume(myTask3Handle);
+		}
+    	if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == GPIO_PIN_RESET)
+    	{
+    		vTaskResume(myTask1Handle);
+    		vTaskResume(myTask2Handle);
+    		vTaskSuspend(myTask3Handle);
+    		HAL_GPIO_WritePin(GPIOD, LD6_Pin,GPIO_PIN_RESET);
+
+        }
+    	vTaskDelay(xDelay);
+
+
+    	}
+    }
+
+ */
+
+//QUESTION 5
 void Led_GateKeeper2(void *pvParameters)
 {
     TickType_t xShortDelay = 100 / portTICK_PERIOD_MS; // 100ms delay
@@ -135,10 +243,8 @@ void Led_GateKeeper4(void *pvParameters)
 }
 
 
-
-
 /*
-
+//QUESTION 3
 void Led_GateKeeper3(void *pvParameters)
 {
 TickType_t xDelay = 1000;
@@ -174,6 +280,7 @@ HAL_GPIO_WritePin(GPIOD, LD6_Pin,0);
 }
 */
 
+
 /* USER CODE END 0 */
 
 /**
@@ -202,6 +309,51 @@ int main(void)
     }
 
     // Créer les tâches
+/*
+//Question 1
+xTaskCreate(Led_Gatekeeper1,    // Task pointer
+            "led gate 1",       // Task name
+            configMINIMAL_STACK_SIZE, // Stack depth
+            NULL,               // Parameters to pass to task
+            2,                  // Priority of the task
+            NULL);              // Task handle to create task
+
+xTaskCreate(Led_Gatekeeper2,    // Task pointer
+            "led gate 2",       // Task name
+            configMINIMAL_STACK_SIZE, // Stack depth
+            NULL,               // Parameters to pass to task
+            2,                  // Priority of the task
+            NULL);              // Task handle to create task
+
+*/
+
+/*
+//Question 2
+xTaskCreate(Led_Gatekeeper1,    // Task pointer
+                "led gate 1",       // Task name
+                configMINIMAL_STACK_SIZE, // Stack depth
+                NULL,               // Parameters to pass to task
+                2,                  // Priority of the task
+                NULL);              // Task handle to create task
+
+xTaskCreate(Led_Gatekeeper2,    // Task pointer
+                "led gate 2",       // Task name
+                configMINIMAL_STACK_SIZE, // Stack depth
+                NULL,               // Parameters to pass to task
+                7,                  // Priority of the task
+                NULL);              // Task handle to create task
+
+*/
+
+/*
+    //QUESTION 4
+    xTaskCreate(btn_GateKeeper,
+                 (const char* const) "btn",
+                 configMINIMAL_STACK_SIZE,
+                 0,
+                 2,
+                 0);
+ */
     xTaskCreate(Led_GateKeeper2, "LED Task 2", 128, NULL, tskIDLE_PRIORITY, NULL);
     xTaskCreate(Led_GateKeeper4, "LED Task 4", 128, NULL, tskIDLE_PRIORITY, NULL);
 
