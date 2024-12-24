@@ -562,7 +562,7 @@ int main(void)
                  2,
                  0);
  */
-    xTaskCreate(Led_GateKeeper2, "LED Task 2", 128, NULL, tskIDLE_PRIORITY, NULL);
+xTaskCreate(Led_GateKeeper2, "LED Task 2", 128, NULL, tskIDLE_PRIORITY, NULL);
  80005ea:	2300      	movs	r3, #0
  80005ec:	9301      	str	r3, [sp, #4]
  80005ee:	2300      	movs	r3, #0
@@ -572,7 +572,7 @@ int main(void)
  80005f6:	490a      	ldr	r1, [pc, #40]	@ (8000620 <main+0x60>)
  80005f8:	480a      	ldr	r0, [pc, #40]	@ (8000624 <main+0x64>)
  80005fa:	f004 fc95 	bl	8004f28 <xTaskCreate>
-    xTaskCreate(Led_GateKeeper4, "LED Task 4", 128, NULL, tskIDLE_PRIORITY, NULL);
+xTaskCreate(Led_GateKeeper4, "LED Task 4", 128, NULL, tskIDLE_PRIORITY, NULL);
  80005fe:	2300      	movs	r3, #0
  8000600:	9301      	str	r3, [sp, #4]
  8000602:	2300      	movs	r3, #0
@@ -584,11 +584,11 @@ int main(void)
  800060e:	f004 fc8b 	bl	8004f28 <xTaskCreate>
 
     // Démarrer le scheduler
-    vTaskStartScheduler();
+vTaskStartScheduler();
  8000612:	f004 fdf7 	bl	8005204 <vTaskStartScheduler>
 
     // Boucle infinie
-    while (1)
+while (1)
  8000616:	bf00      	nop
  8000618:	e7fd      	b.n	8000616 <main+0x56>
  800061a:	bf00      	nop

@@ -93,15 +93,11 @@ void Led_Gatekeeper1(void *pvParameters) {
     TickType_t xDelay = 1000 / portTICK_PERIOD_MS; // 1-second delay
     for (;;) {
         HAL_GPIO_WritePin(GPIO, LD4_Pin | LD3_Pin, GPIO_PIN_RESET);
-        // printf("Low\n"); // Uncomment for debugging
-        // puts("Low");    // Uncomment for debugging
-
+        
         vTaskDelay(xDelay);
 
         HAL_GPIO_WritePin(GPIO, LD4_Pin | LD3_Pin, GPIO_PIN_SET);
-        // printf("High\n"); // Uncomment for debugging
-        // puts("High");     // Uncomment for debugging
-
+       
         vTaskDelay(xDelay);
     }
 }
@@ -110,20 +106,56 @@ void Led_Gatekeeper2(void *pvParameters) {
     TickType_t xDelay = 1000 / portTICK_PERIOD_MS; // 1-second delay
     for (;;) {
         HAL_GPIO_WritePin(GPIO, LD5_Pin | LD6_Pin, GPIO_PIN_RESET);
-        // printf("Low\n"); // Uncomment for debugging
-        // puts("Low");    // Uncomment for debugging
-
+        
         vTaskDelay(xDelay);
 
         HAL_GPIO_WritePin(GPIO, LD5_Pin | LD6_Pin, GPIO_PIN_SET);
-        // printf("High\n"); // Uncomment for debugging
-        // puts("High");     // Uncomment for debugging
+        
 
         vTaskDelay(xDelay);
     }
 }
 
  */
+
+
+/*
+//QUESTION 3
+void Led_GateKeeper3(void *pvParameters)
+{
+TickType_t xDelay = 1000;
+
+for(;;){
+HAL_GPIO_TogglePin(GPIOD, LD6_Pin);
+vTaskDelay(xDelay);
+
+}
+
+}
+
+void btn_GateKeeper(void *pvParameters)
+{
+for(;;){
+if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0)==1){
+vTaskSuspend(myTask1Handle);
+vTaskSuspend(myTask2Handle);
+vTaskResume(myTask3Handle);
+
+}
+
+if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0)==0){
+vTaskResume(myTask1Handle);
+vTaskResume(myTask2Handle);
+vTaskSuspend(myTask3Handle);
+HAL_GPIO_WritePin(GPIOD, LD6_Pin,0);
+}
+}
+
+
+}
+*/
+
+
 /*
 //QUESTION 4
 void Led_GateKeeper1(void *pvParameters)
@@ -132,12 +164,8 @@ void Led_GateKeeper1(void *pvParameters)
     for(;;)
     {
         HAL_GPIO_WritePin(GPIOD, LD4_Pin|LD3_Pin, GPIO_PIN_RESET);
-        //printf("Low\n");
-        //puts("Low");
         vTaskDelay(xDelay);
         HAL_GPIO_WritePin(GPIOD, LD4_Pin|LD3_Pin, GPIO_PIN_SET);
-        //printf("High\n");
-        //puts("High");
         vTaskDelay(xDelay);
     }
 }
@@ -148,12 +176,8 @@ void Led_GateKeeper2(void *pvParameters)
     for(;;)
     {
         HAL_GPIO_WritePin(GPIOD, LD5_Pin, GPIO_PIN_RESET);
-        //printf("Low\n");
-        //puts("Low");
         vTaskDelay(xDelay);
         HAL_GPIO_WritePin(GPIOD, LD5_Pin, GPIO_PIN_SET);
-        //printf("High\n");
-        //puts("High");
         vTaskDelay(xDelay);
     }
 }
@@ -242,43 +266,39 @@ void Led_GateKeeper4(void *pvParameters)
     }
 }
 
-
 /*
-//QUESTION 3
-void Led_GateKeeper3(void *pvParameters)
-{
-TickType_t xDelay = 1000;
+//QUESTION 6
+void TaskConsumer(void *pvParameters) {
+    int buttonPressCount = 0;
 
-for(;;){
-HAL_GPIO_TogglePin(GPIOD, LD6_Pin);
-vTaskDelay(xDelay);
-
+    for (;;) {
+        if (xSemaphoreTake(xSemaphore, portMAX_DELAY) == pdTRUE) {
+            buttonPressCount++; 
+            
+            if (buttonPressCount >= 3) {
+                HAL_GPIO_WritePin(GPIOD, LD4_Pin, GPIO_PIN_RESET); 
+                buttonPressCount = 0; 
+            }
+        }
+    }
 }
 
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
+    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+
+    // Donner le sémaphore (signale le consommateur)
+    xSemaphoreGiveFromISR(xSemaphore, &xHigherPriorityTaskWoken);
+
+    // Demande un basculement de contexte si nécessaire
+    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+
+    // Basculer une autre LED (par exemple, LD3 pour indiquer l'interruption)
+    HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
 }
 
-void btn_GateKeeper(void *pvParameters)
-{
-
-for(;;){
-if(HAL_GPIO_ReadPin(GPIOA, B1_Pin)==1){
-vTaskSuspend(myTask1Handle);
-vTaskSuspend(myTask2Handle);
-vTaskResume(myTask3Handle);
-
-}
-
-if(HAL_GPIO_ReadPin(GPIOA, B1_Pin)==0){
-vTaskResume(myTask1Handle);
-vTaskResume(myTask2Handle);
-vTaskSuspend(myTask3Handle);
-HAL_GPIO_WritePin(GPIOD, LD6_Pin,0);
-}
-}
+ */
 
 
-}
-*/
 
 
 /* USER CODE END 0 */
@@ -347,21 +367,21 @@ xTaskCreate(Led_Gatekeeper2,    // Task pointer
 
 /*
     //QUESTION 4
-    xTaskCreate(btn_GateKeeper,
+xTaskCreate(btn_GateKeeper,
                  (const char* const) "btn",
                  configMINIMAL_STACK_SIZE,
                  0,
                  2,
                  0);
  */
-    xTaskCreate(Led_GateKeeper2, "LED Task 2", 128, NULL, tskIDLE_PRIORITY, NULL);
-    xTaskCreate(Led_GateKeeper4, "LED Task 4", 128, NULL, tskIDLE_PRIORITY, NULL);
+xTaskCreate(Led_GateKeeper2, "LED Task 2", 128, NULL, tskIDLE_PRIORITY, NULL);
+xTaskCreate(Led_GateKeeper4, "LED Task 4", 128, NULL, tskIDLE_PRIORITY, NULL);
 
     // Démarrer le scheduler
-    vTaskStartScheduler();
+vTaskStartScheduler();
 
     // Boucle infinie
-    while (1)
+while (1)
     {
     }
 }
